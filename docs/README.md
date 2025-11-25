@@ -1,5 +1,7 @@
 ## API Reference 
 
+### MODELO ENTIDADE RELACIONAMENTO
+![MODELO ENTIDADE RELACIONAMENTO](./lojarsDiagramas.png)
 
 ### Clientes
 

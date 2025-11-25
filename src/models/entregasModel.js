@@ -2,7 +2,7 @@ const { sql, getConnection } = require("../config/db");
 
 const entregasModel = {
   
-  // LISTAR TODAS AS ENTREGAS
+  //listar todas as entregas
   listarEntregas: async () => {
     const pool = await getConnection();
     const result = await pool.request().query(`
@@ -13,17 +13,19 @@ const entregasModel = {
     return result.recordset;
   },
 
-  // BUSCAR ENTREGA POR ID
+  // buscar entrega por ID
   buscarUm: async (idEntrega) => {
+    // console.log(` Pedido: ${idPedido}`);
     const pool = await getConnection();
     const result = await pool.request()
-      .input("idEntrega", sql.Int, idEntrega)
+      .input("idEntrega", sql.UniqueIdentifier, idEntrega)
       .query(`
-        SELECT e.*, p.idCliente, p.tipoEntrega, p.distancia, p.pesoCarga
-        FROM entregas e
-        INNER JOIN pedidos p ON p.idPedido = e.idPedido
-        WHERE e.idEntrega = @idEntrega
+        SELECT *
+        FROM Entregas 
+        WHERE idEntrega = @idEntrega
       `);
+
+    console.log(result);
 
     return result.recordset[0];
   },

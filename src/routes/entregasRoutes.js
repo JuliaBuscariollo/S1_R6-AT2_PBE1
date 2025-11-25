@@ -6,6 +6,6 @@ const { entregasController } = require("../controllers/entregasController");
 router.get("/entregas", entregasController.listarEntregas);
 
 //busca entregas
-router.get("/entregas/:id", entregasController.buscarEntrega);
+router.get("/entregas/:idEntrega", entregasController.buscarUm);
 
 module.exports = { entregasRoutes: router };

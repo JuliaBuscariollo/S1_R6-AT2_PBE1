@@ -1,9 +1,9 @@
 const { clienteModel } = require("../models/clientesModel");
 
 const clienteController = {
-  // -------------------------
+  
   // GET /clientes
-  // -------------------------
+
   listarClientes: async (req, res) => {
     try {
       const { idCliente } = req.query;
@@ -24,9 +24,9 @@ const clienteController = {
     }
   },
 
-  // -------------------------
+  
   // POST /clientes
-  // -------------------------
+
   criarCliente: async (req, res) => {
     try {
       const { nomeCliente, cpfCliente, telCliente, emailCliente, enderecoCliente } = req.body;
@@ -50,9 +50,9 @@ const clienteController = {
     }
   },
 
-  // -------------------------
+ 
   // PUT /clientes/:idCliente
-  // -------------------------
+
  atualizarCliente: async (req, res) => {
   try {
     const { idCliente } = req.params;
@@ -86,9 +86,9 @@ const clienteController = {
   }
 }, 
 
-  // -------------------------
+
   // DELETE /clientes/:idCliente
-  // -------------------------
+ 
   deletarCliente: async (req, res) => {
     try {
       const { idCliente } = req.params;

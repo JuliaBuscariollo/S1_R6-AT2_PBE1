@@ -1,12 +1,24 @@
+const { clienteModel } = require("../models/clientesModel");
+const { entregasModel } = require("../models/entregasModel");
 const { pedidosModel } = require("../models/pedidosModel");
 
 const pedidosController = {
 
-  // --------------------------
-  // LISTAR TODOS OS PEDIDOS
-  // --------------------------
+  // Listar todos os pedidos
+ 
   listarPedidos: async (req, res) => {
     try {
+
+      const { idPedido } = req.query;
+
+      if (idPedido) {
+        const pedido = await pedidosModel.buscarUm(idPedido);
+        if (!pedido || pedido.length === 0) {
+          return res.status(404).json({ erro: "Pedido não encontrado!" });
+        }
+        return res.status(200).json(pedido);
+      }
+
       const pedidos = await pedidosModel.listarPedidos();
       res.status(200).json(pedidos);
     } catch (error) {
@@ -15,86 +27,108 @@ const pedidosController = {
     }
   },
 
-  // --------------------------
-  // CRIAR E CALCULAR UM PEDIDO
-  // --------------------------
+ 
+  // Criar e calcular um pedido 
+
   criarPedidos: async (req, res) => {
     try {
-      const { idCliente, tipoEntrega, distancia, pesoCarga, valorKm, valorKg } = req.body;
+      const {
+        idCliente,
+        dataPedido,
+        distancia,
+        pesoCarga,
+        tipoEntrega,
+        valorKm,
+        valorKg,
+      } = req.body;
 
-      if (!idCliente || !tipoEntrega || !distancia || !pesoCarga || !valorKm || !valorKg) {
-        return res.status(400).json({ erro: "Preencha todos os campos obrigatórios." });
+      if (
+        !idCliente ||
+        !dataPedido ||
+        !tipoEntrega ||
+        !distancia ||
+        !pesoCarga ||
+        !valorKm ||
+        !valorKg
+      ) {
+        return res
+          .status(400)
+          .json({ erro: "Preencha todos os campos obrigatórios." });
       }
 
-      
-      // Fazer os cálculos
-      const valorDistancia = (distancia) * (valorKm);
-      const valorPeso = (pesoCarga) * (valorKg);
-      
+      if (
+        isNaN(valorKm) ||
+        isNaN(valorKg) ||
+        isNaN(distancia) ||
+        isNaN(pesoCarga)
+      ) {
+        return res.status(400).json({ erro: "Dados inválidos!" });
+      }
+      // Fazer os cálculos da entrega - em caso do peso ser maior que 50, a taxa extra é fixa de 15 reais.
+      const valorDistancia = distancia * valorKm;
+      const valorPeso = pesoCarga * valorKg;
+
       let acrescimo = 0;
       if (tipoEntrega.toLowerCase() === "urgente") {
         acrescimo = (valorDistancia + valorPeso) * 0.2;
       }
-      
-      let desconto = 0;
-      if (pesoCarga > 100) {
-        desconto = (valorDistancia + valorPeso) * 0.1;
-      }
 
       let taxaExtra = 0;
       if (distancia > 50) {
-        taxaExtra = 25;
+        taxaExtra = 15;
       }
-      let statusEntrega = "Pendente";
 
-      const valorFinal = valorDistancia + valorPeso + acrescimo - desconto + taxaExtra;
-      
-      // Criar o pedido no banco
-      const novoPedido = await pedidosModel.criarPedidos(
-        valorDistancia,
-        valorPeso,
+      let valorFinal = valorDistancia + valorPeso + acrescimo + taxaExtra;
+
+      let desconto = 0;
+      if (valorFinal > 500) {
+        desconto = valorFinal * 0.1;
+        valorFinal = valorFinal - desconto;
+      }
+
+      let statusEntrega = "Calculado";
+
+      // Criar o pedido no banco de dados
+      await pedidosModel.criarPedido(
+        idCliente,
+        dataPedido,
+        distancia,
+        pesoCarga,
+        tipoEntrega,
+        valorKg,
+        valorKm,
         acrescimo,
         desconto,
+        statusEntrega,
         taxaExtra,
+        valorDistancia,
         valorFinal,
-        statusEntrega
+        valorPeso
       );
 
       res.status(201).json({
         message: "Pedido registrado e calculado com sucesso!",
-        pedido: {
-          idPedido: novoPedido.idPedido,
-        valorDistancia,
-        valorPeso,
-        acrescimo,
-        desconto,
-        taxaExtra,
-        valorFinal,
-        statusEntrega,
-          calculos: {
-            valorDistancia,
-            valorPeso,
-            acrescimo,
-            desconto,
-            taxaExtra,
-            valorFinal,
-          }
-        }
       });
-
     } catch (error) {
       console.error("Erro ao criar pedido:", error);
       res.status(500).json({ erro: "Erro no servidor ao criar pedido." });
     }
   },
 
-  // --------------------------
-  // ATUALIZAR UM PEDIDO
-  // --------------------------
+  // Atualizar um pedido 
   atualizarPedido: async (req, res) => {
     try {
       const { idPedido } = req.params;
-      const { tipoEntrega, distancia, pesoCarga, valorKm, valorKg } = req.body;
+      const {
+        idCliente,
+        dataPedido,
+        tipoEntrega,
+        distancia,
+        pesoCarga,
+        valorKm,
+        valorKg,
+        statusEntrega,
+      } = req.body;
 
       if (idPedido.length != 36) {
         return res.status(400).json({ erro: "Id do pedido inválido!" });
@@ -108,26 +142,95 @@ const pedidosController = {
 
       const pedidoAntigo = pedido[0];
 
+      const entregaAntiga = await entregasModel.buscarUm(idPedido);
+      console.log("kkkkkkkkk: ", entregaAntiga);
+      
+
+      if (idCliente) {
+        if (idCliente.length != 36) {
+          return res.status(400).json({ erro: "Id do cliente inválido!" });
+        }
+
+        const cliente = clienteModel.buscarUm(idCliente);
+
+        if (!cliente || cliente.length != 1) {
+          return res.status(404).json({ erro: "Cliente não encontrado!" });
+        }
+      }
+
+      if (statusEntrega) {
+        if (
+          statusEntrega != "calculado" &&
+          statusEntrega != "em transito" &&
+          statusEntrega != "entregue" &&
+          statusEntrega != "cancelado"
+        ) {
+          return res.status(400).json({ erro: "Status de entrega inválido!" });
+        }
+      }
+ 
+      const idClienteAtualizado = idCliente ?? pedidoAntigo.idCliente;
+      const dataPedidoAtualizada = dataPedido ?? pedidoAntigo.dataPedido;
+      const tipoEntregaAtualizada = tipoEntrega ?? pedidoAntigo.tipoEntrega;
+      const distanciaAtualizado = distancia ?? pedidoAntigo.distancia;
+      const pesoCargaAtualizada = pesoCarga ?? pedidoAntigo.pesoCarga;
+      const valorKmAtualizado = valorKm ?? pedidoAntigo.valorKm;
+      const valorKgAtualizado = valorKg ?? pedidoAntigo.valorKg;
+      const statusEntregaAtualizado =
+        statusEntrega ?? entregaAntiga.statusEntrega;
+      const valorDistanciaAtualizado = distanciaAtualizado * valorKmAtualizado;
+      const valorPesoAtualizado = pesoCargaAtualizada * valorKgAtualizado;
+    
+
+      // se a entrega for urgente, ou se o pedido exceder o peso máximo, o acréscimo é calculado:
+      let acrescimoAtualizado = 0;
+      if (tipoEntregaAtualizada.toLowerCase() === "urgente") {
+        acrescimoAtualizado = (valorDistanciaAtualizado + valorPesoAtualizado) * 0.2;
+      }
+
+      let taxaExtraAtualizada = 0;
+      if (pesoCargaAtualizada > 50) {
+        taxaExtraAtualizada = 15;
+      }
+
+      //valor final
+
+      let valorFinalAtualizada = valorDistanciaAtualizado + valorPesoAtualizado + acrescimoAtualizado + taxaExtraAtualizada;
+
+      let descontoAtualizado = 0;
+      if (valorFinalAtualizada > 500) {
+        descontoAtualizado = valorFinalAtualizada * 0.1;
+        valorFinalAtualizada = valorFinalAtualizada - descontoAtualizado;
+      }
+
       await pedidosModel.atualizarPedido(
         idPedido,
-        tipoEntrega ?? pedidoAntigo.tipoEntrega,
-        distancia ?? pedidoAntigo.distancia,
-        pesoCarga ?? pedidoAntigo.pesoCarga,
-        valorKm ?? pedidoAntigo.valorKm,
-        valorKg ?? pedidoAntigo.valorKg
+        dataPedidoAtualizada,
+        distanciaAtualizado,
+        idClienteAtualizado,
+        pesoCargaAtualizada,
+        tipoEntregaAtualizada,
+        valorKmAtualizado,
+        valorKgAtualizado,
+        acrescimoAtualizado,
+        descontoAtualizado,
+        statusEntregaAtualizado,
+        taxaExtraAtualizada,
+        valorDistanciaAtualizado,
+        valorFinalAtualizada,
+        valorPesoAtualizado
       );
 
       res.status(200).json({ message: "Pedido atualizado com sucesso!" });
-
     } catch (error) {
       console.error("Erro ao atualizar pedido:", error);
       res.status(500).json({ erro: "Erro no servidor ao atualizar pedido." });
     }
   },
 
-  // --------------------------
-  // DELETAR UM PEDIDO
-  // --------------------------
+
+  // Deletar um pedido
+
   deletarPedido: async (req, res) => {
     try {
       const { idPedido } = req.params;
@@ -137,13 +240,12 @@ const pedidosController = {
       }
 
       await pedidosModel.deletarPedido(idPedido);
-      res.status(200).json({ message: "Pedido excluído com sucesso!" });
-
+      res.status(200).json({ message: "Pedido excluído com sucesso!" }); // quando o pedido é deletado, automaticamenta a entrega vinculada a ele tambem sera
     } catch (error) {
       console.error("Erro ao excluir pedido:", error);
       res.status(500).json({ erro: "Erro no servidor ao excluir pedido." });
     }
-  }
+  },
 };
 
 module.exports = { pedidosController };

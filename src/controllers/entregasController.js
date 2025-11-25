@@ -2,7 +2,7 @@ const { entregasModel } = require("../models/entregasModel");
 
 const entregasController = {
 
-  // LISTAR TODAS AS ENTREGAS
+  // Listar todas as entregas
   listarEntregas: async (req, res) => {
     try {
       const {idEntrega} = req.query;
@@ -26,11 +26,11 @@ const entregasController = {
     }
   },
 
-  // BUSCAR ENTREGA POR ID
-  buscarEntrega: async (req, res) => {
+  // Buscar entrega através do ID
+  buscarUm: async (req, res) => {
     try {
       const { idEntrega } = req.params;
-      const entrega = await entregasModel.buscarEntregaPorId(idEntrega);
+      const entrega = await entregasModel.buscarUm(idEntrega);
 
       if (!entrega) {
         return res.status(404).json({ erro: "Entrega não encontrada." });

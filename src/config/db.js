@@ -20,12 +20,13 @@ async function getConnection() {
   }
 }
 
+(async () => {
+  const pool = await getConnection();
+
+  if (pool) {
+    console.log("conexão com o BD bem sucedida");
+  }
+})();
+
 module.exports = { sql, getConnection };
 
-// (async () => {
-//   const teste = await getConnetion();
-
-//   if (teste) {
-//     console.log("conexão bem sucedida");
-//   }
-// })();

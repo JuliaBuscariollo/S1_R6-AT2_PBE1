@@ -1,5 +1,6 @@
 const { sql, getConnection } = require("../config/db");
 
+// buscar todos os clientes no banco de dados
 const clienteModel = {
   buscarTodos: async () => {
     try {
@@ -12,7 +13,7 @@ const clienteModel = {
       throw error;
     }
   },
-
+//buscar um cpf no banco de dados
   buscarCpf: async (cpfCliente) => {
     try {
       const pool = await getConnection();
@@ -29,6 +30,7 @@ const clienteModel = {
     }
   },
 
+  // buscar o cliente no banco de dados
   buscarUm: async (idCliente) => {
     try {
       const pool = await getConnection();
@@ -44,6 +46,7 @@ const clienteModel = {
     }
   },
 
+  //inserir o cliente no banco de dados
   inserirCliente: async (
     nomeCliente,
     cpfCliente,
@@ -71,6 +74,8 @@ const clienteModel = {
     }
   },
 
+
+  // atualizar o cliente no banco de dados
   atualizarCliente: async (
     idCliente,
     nomeCliente,
@@ -104,6 +109,8 @@ const clienteModel = {
       throw error;
     }
   },
+
+  // deletar o cliente no banco de dados
 
   deletarCliente: async (idCliente) => {
     try {

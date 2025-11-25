@@ -143,7 +143,7 @@ const pedidosController = {
       const pedidoAntigo = pedido[0];
 
       const entregaAntiga = await entregasModel.buscarUm(idPedido);
-      console.log("kkkkkkkkk: ", entregaAntiga);
+      console.log(entregaAntiga);
       
 
       if (idCliente) {

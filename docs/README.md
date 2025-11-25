@@ -1,7 +1,7 @@
 ## API Reference 
 
 ### MODELO ENTIDADE RELACIONAMENTO
-![MODELO ENTIDADE RELACIONAMENTO](./lojarsDiagramas.png)
+![MODELO ENTIDADE RELACIONAMENTO](./MER.png)
 
 ### Clientes
 

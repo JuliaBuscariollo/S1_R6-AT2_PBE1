@@ -1,6 +1,19 @@
 const { sql, getConnection } = require("../config/db");
 
 const pedidosModel = {
+  
+   // GET /pedidos
+
+  /**
+   * controlador lista todos os pedidos do banco de dados
+   *
+   * @async
+   * @function: listar pedidos
+   * @param {object} req -> objeto de requisisão (recebido do cliente HTTP)
+   * @param {object} res -> objeto de resposta ( enviado ao  cliente HTTP)
+   * @returns {@promise<void>} retorna uma resposta json com uma lista de pedidos
+   * @throws Mostra o console e retorna erro 500 se ocorrer falha de buscar os pedidos
+   */
   listarPedidos: async () => {
     const pool = await getConnection();
     const result = await pool.request().query("SELECT * FROM pedidos");
@@ -73,6 +86,15 @@ const pedidosModel = {
   // Buscar um pedido por ID
   
   buscarUm: async (idPedido) => {
+    /**
+     * GET/ pedidos
+   * ela busca um pedido no banco de dados a partir do id
+   *    
+   * @async
+   * @function burscarTodos
+   * @returns {Promise<array>} retorna uma lista com o pedido
+   * @throws mostra no console e propaga o erro caso a busca falhe
+   */
     try {
       const pool = await getConnection();
       const querySQL = `SELECT * FROM PEDIDOS WHERE idPedido = @idPedido`;
@@ -89,10 +111,49 @@ const pedidosModel = {
     }
   },
 
+  buscarPorCliente: async(idCliente) =>{
+     /**
+     * GET/ pedidos
+   * ela busca um pedido no banco de dados a partir do idCliente
+   *    
+   * @async
+   * @function burscarPorCliente
+   * @returns {Promise<array>} retorna uma lista com o pedido
+   * @throws mostra no console e propaga o erro caso a busca falhe
+   */
+    const pool = await getConnection();
+
+      try {
+        const pool = await getConnection();
+        const querySQL = `SELECT * FROM PEDIDOS WHERE idCliente = @idCliente`;
+  
+        const result = await pool
+          .request()
+          .input("idCliente", sql.UniqueIdentifier, idCliente)
+          .query(querySQL);
+  
+
+        return result.recordset;
+      } catch (error) {
+        console.error(`Erro ao buscar o pedido sobre esse cliente:`, error);
+      throw error;
+      }
+  },
+
  
   // atualizar um pedido existente
+   /**
+     * PUT/pedidos/:idPedido
+   * ela atualiza o pedido no banco de dados
+   *
+   * @async
+   * @function atualizarPedido
+   * @returns {Promise<array>} retorna uma mensagem de atualização bem sucedida 
+   * @throws mostra no console e propaga o erro caso a busca falhe
+   */
 
   atualizarPedido: async (
+
     idPedido,
     dataPedido,
     distancia,
@@ -168,6 +229,16 @@ const pedidosModel = {
   },
 
   // deletar um pedido
+    /**
+     * DELETE /pedido
+   * ela deleta o pedido no banco de dados
+   *
+   * @async
+   * @function deletarPedido
+   * @param {string} idPedido - Id do pedido para exclusão. 
+   * @returns {Promise<void>} Não retorna nada, apenas executa a exclusão.
+   * @throws mostra no console e propaga o erro caso a busca falhe
+   */
 
   deletarPedido: async (idPedido) => {
     const pool = await getConnection();

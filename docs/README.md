@@ -1,69 +1,88 @@
-## API Reference 
+## API Reference
 
 ### MODELO ENTIDADE RELACIONAMENTO
+
 ![MODELO ENTIDADE RELACIONAMENTO](./MER.png)
 
 ### Clientes
 
 #### GET /clientes
+
 - **Descrição** : Obtém uma lista de clientes
-- **Response**:  Array de clientes
+- **Response**: Array de clientes
+- **Filtros**:
+
 ```
-	{
-		"idCliente": "1D4635A2-4E72-47D2-BE34-29E2021388E1",
-		"nomeCliente": "livia",
-		"cpfCliente": "12345542298",
-		"telCliente": "055019911993713",
-		"emailCliente": "livia@gmail",
-		"enderecoCliente": "tititlalalalalalati"
-	}
+	GET /clientes?idCliente=1D4635A2-4E72-47D2-BE34-29E2021388E1
 ```
 
 #### POST /clientes
+
 - **Descrição** : Cria um novo cliente
-- **Body** : 
+- **Body** :
+
 ```
-    { 
-				
-		"nomeCliente" : "livia",
-        "cpfCliente" : "12345599298",
-        "telCliente": "055019911993713",
-        "emailCliente" : "livia@gmail",
-        "enderecoCliente" : "tititlalalalalalati"
-			
-			} 
+{
+	"nomeCliente" : "livia",
+	"cpfCliente" : "12345599298",
+	"telCliente": "055019911993713",
+	"emailCliente" : "livia@gmail",
+	"enderecoCliente" : "tititlalalalalalati"
+}
 ```
+
 - **Response**:
+
 ```
 {
 	"message": "Cliente cadastrado com sucesso!"
-} 
+}
+```
+
+- **Error Response**:
+
+```
+{
+	"erro": "CPF ou Email já cadastrado!"
+}
+
 ```
 - **Error Response**:
 ```
 {
-	"erro": "CPF já cadastrado!"
+	"erro": "Erro ao atualizar cliente"
 }
+```
+
+#### PUT /clientes/:idCliente
+
+- **Descrição**: Atualiza um cliente já existente
+- **Body**:
 
 ```
-#### PUT /clientes
--**Descrição**: Atualiza um cliente já existente
--**Body**: 
+{
+    "idCliente": "22E18449-C800-484C-9253-0A0A5D361414",
+	"nomeCliente": "livia",
+	"cpfCliente": "12345599298",
+	"telCliente": "055019911993713",
+	"emailCliente": "livia@gmail",
+	"enderecoCliente": "tititlalalalalalati"
+	}
 ```
-{	
-        "telCliente": "055019911993000"      
-}
-```
--**Response**:
+
+- **Response**:
+
 ```
 {
     "message":"Cliente atualizado com sucesso!"
 }
 ```
 
-#### DELETE /clientes /idCliente
--**Descrição**: Deleta o cliente com base no Id
-- **Response**: 
+#### DELETE /clientes /:idCliente
+
+- **Descrição**: Deleta o cliente com base no Id
+- **Response**:
+
 ```
 {
     "message":"Cliente deletado com sucesso!"
@@ -73,39 +92,18 @@
 ### Pedidos
 
 #### GET /pedidos
-- **Descrição** : Obtém uma lista de pedidos 
-- **Response** : Array de pedidos 
-´´´
-[
-	{
-		"idPedido": "D568739A-DC02-48F5-B54B-8ECCED1C5554",
-		"idCliente": "1D4635A2-4E72-47D2-BE34-29E2021388E1",
-		"dataPedido": "2025-11-25T00:00:00.000Z",
-		"tipoEntrega": "urgente",
-		"distancia": 250,
-		"pesoCarga": 5,
-		"valorKm": 3.5,
-		"valorKg": 4
-	},
-	{
-		"idPedido": "1C43AEC9-A2CF-4B62-97F2-BD23AAECAB1D",
-		"idCliente": "365CE11F-0784-4CF8-BAE6-6EC9680F20F2",
-		"dataPedido": "2025-11-21T00:00:00.000Z",
-		"tipoEntrega": "normal",
-		"distancia": 150,
-		"pesoCarga": 67,
-		"valorKm": 2.5,
-		"valorKg": 3
-	}
-]
-´´´
 
-#### POST /pedidos 
+- **Descrição** : Obtém uma lista de pedidos
+- **Response** : Array de pedidos
+
+#### POST /pedidos
+
 - **Descrição** : Cria um novo pedido
-- **Body** : 
+- **Body** :
+
 ```
 {
-   
+
  {
   "idCliente": "1D4635A2-4E72-47D2-BE34-29E2021388E1",
   "dataPedido": "2025-11-31",
@@ -119,30 +117,36 @@
 ```
 
 - **Response**:
+
 ```
 {
-    "message": "Pedido criado com sucesso!"    
-} 
+    "message": "Pedido criado com sucesso!"
+}
 ```
 
-#### PUT /pedidos
--**Descrição**: Atualiza um pedido já existente
--**Body**: 
+#### PUT /pedidos/:idPedido
+
+-**Descrição**: Atualiza um pedido já existente -**Body**:
+
 ```
 {
 	"statusEntrega": "em transito"
 }
 ```
+
 -**Response**:
+
 ```
 {
     "message":"Pedido atualizado com sucesso!"
 }
 ```
 
-#### DELETE /pedidos /idPedido
--**Descrição**: Deleta o pedido com base no Id
-- **Response**: 
+#### DELETE /pedidos /:idPedido
+
+- **Descrição**: Deleta o pedido com base no Id
+- **Response**:
+
 ```
 {
     "message":"Pedido deletado com sucesso!"
@@ -151,9 +155,7 @@
 
 ### Entregas
 
-
 #### GET /entregas
+
 - **Descrição** : Obtém uma lista de entregas
 - **Response** : Array de entregas
-
-

@@ -2,6 +2,16 @@ const { sql, getConnection } = require("../config/db");
 
 // buscar todos os clientes no banco de dados
 const clienteModel = {
+    /**
+     * GET/Clientes
+   * ela busca todos os clientes no banco de dados
+   *
+   * @async
+   * @function burscarTodos
+   * @returns {Promise<array>} retorna uma lista com todos os clientes
+   * @throws mostra no console e propaga o erro caso a busca falhe
+   */
+
   buscarTodos: async () => {
     try {
       const pool = await getConnection();
@@ -13,40 +23,77 @@ const clienteModel = {
       throw error;
     }
   },
+
+  /**
+     * GET/Clientes
+   * ela busca um cliente no banco de dados a partir do id
+   *    
+   * @async
+   * @function burscarTodos
+   * @returns {Promise<array>} retorna uma lista com o cliente
+   * @throws mostra no console e propaga o erro caso a busca falhe
+   */
+  buscarUm: async (idCliente) => {
+    // console.log(` Pedido: ${idPedido}`);
+    
+    try {
+      
+      const pool = await getConnection();
+      const result = await pool.request()
+        .input("idCliente", sql.UniqueIdentifier, idCliente)
+        .query(`
+          SELECT *
+          FROM Clientes 
+          WHERE idCliente = @idCliente
+        `);
+
+        return result.recordset;
+
+    } catch (error) {
+        console.error("Erro ao buscar cliente!", error);
+      throw error;
+    }
+  },
+
 //buscar um cpf no banco de dados
-  buscarCpf: async (cpfCliente) => {
+/**
+     * GET/Clientes
+   * ela busca todos os dados como cpf e email no banco de dados 
+   *
+   * @async
+   * @function burscarTodos
+   * @returns {Promise<array>} retorna os cfps e emails já cadastrados
+   * @throws mostra no console e propaga o erro caso a busca falhe
+   */
+  buscarCpfouEmail: async (cpfCliente, emailCliente) => {
     try {
       const pool = await getConnection();
-      const query = "SELECT * FROM Clientes WHERE cpfCliente = @cpfCliente;";
+      const query = "SELECT * FROM Clientes WHERE cpfCliente = @cpfCliente OR emailCliente = @emailCliente;";
       const result = await pool
         .request()
         .input("cpfCliente", sql.Char(11), cpfCliente)
+        .input("emailCliente", sql.VarChar(150), emailCliente)
         .query(query);
 
       return result.recordset;
     } catch (error) {
-      console.error("Erro ao buscar cliente por CPF:", error);
+      console.error("Erro ao buscar cliente por cpf ou email:", error);
       throw error;
     }
   },
-
-  // buscar o cliente no banco de dados
-  buscarUm: async (idCliente) => {
-    try {
-      const pool = await getConnection();
-      const query = "SELECT * FROM Clientes WHERE idCliente = @idCliente";
-      const result = await pool
-        .request()
-        .input("idCliente", sql.UniqueIdentifier, idCliente) // troque para UniqueIdentifier se for o caso
-        .query(query);
-      return result.recordset;
-    } catch (error) {
-      console.error("Erro ao buscar o cliente:", error);
-      throw error;
-    }
-  },
+ 
 
   //inserir o cliente no banco de dados
+
+  /**
+     * POST /Clientes
+   * ela insere o cliente no banco de dados
+   *
+   * @async
+   * @function inserirCliente
+   * @returns {Promise<array>} retorna uma mensagem de criação bem sucedida
+   * @throws mostra no console e propaga o erro caso a busca falhe
+   */
   inserirCliente: async (
     nomeCliente,
     cpfCliente,
@@ -76,6 +123,15 @@ const clienteModel = {
 
 
   // atualizar o cliente no banco de dados
+  /**
+     * PUT/Clientes
+   * ela atualiza o cliente no banco de dados
+   *
+   * @async
+   * @function atualizarCliente
+   * @returns {Promise<array>} retorna uma mensagem de atualização bem sucedida 
+   * @throws mostra no console e propaga o erro caso a busca falhe
+   */
   atualizarCliente: async (
     idCliente,
     nomeCliente,
@@ -111,6 +167,15 @@ const clienteModel = {
   },
 
   // deletar o cliente no banco de dados
+   /**
+     * DELETE /Clientes
+   * ela deleta o cliente no banco de dados
+   *
+   * @async
+   * @function deletarCliente
+   * @returns {Promise<array>} retorna uma mensagem de exclusão bem sucedida 
+   * @throws mostra no console e propaga o erro caso a busca falhe
+   */
 
   deletarCliente: async (idCliente) => {
     try {

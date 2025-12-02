@@ -5,6 +5,19 @@ const { pedidosModel } = require("../models/pedidosModel");
 const pedidosController = {
 
   // Listar todos os pedidos
+
+   // GET /pedidos
+
+  /**
+   * controlador lista todos os pedidos do banco de dados
+   *
+   * @async
+   * @function: listar pedidos
+   * @param {object} req -> objeto de requisisão (recebido do cliente HTTP)
+   * @param {object} res -> objeto de resposta ( enviado ao  cliente HTTP)
+   * @returns {@promise<void>} retorna uma resposta json com uma lista de pedidos
+   * @throws Mostra o console e retorna erro 500 se ocorrer falha de buscar os pedidos
+   */
  
   listarPedidos: async (req, res) => {
     try {
@@ -29,6 +42,20 @@ const pedidosController = {
 
  
   // Criar e calcular um pedido 
+
+  // POST /pedidos
+
+  /**
+   * controlador cria os pedidos do banco de dados
+   *
+   * @async
+   * @function: criar pedidos
+   * @param {object} req -> objeto de requisisão (recebido do cliente HTTP)
+   * @param {object} res -> objeto de resposta ( enviado ao  cliente HTTP)
+   * @returns {@promise<void>} retorna uma resposta json com uma mensagem de cadastro bem-sucedido
+   * @throws Mostra o console e retorna erro 500 se ocorrer falha de buscar os pedidos
+   */
+ 
 
   criarPedidos: async (req, res) => {
     try {
@@ -116,6 +143,20 @@ const pedidosController = {
   },
 
   // Atualizar um pedido 
+
+  // PUT /pedidos
+
+  /**
+   * controlador atualiza os pedidos do banco de dados
+   *
+   * @async
+   * @function: atualizar pedidos
+   * @param {object} req -> objeto de requisisão (recebido do cliente HTTP)
+   * @param {object} res -> objeto de resposta ( enviado ao  cliente HTTP)
+   * @returns {@promise<void>} retorna uma resposta json com uma lista de pedidos
+   * @throws Mostra o console e retorna erro 500 se ocorrer falha de buscar os pedidos
+   */
+ 
   atualizarPedido: async (req, res) => {
     try {
       const { idPedido } = req.params;
@@ -230,6 +271,20 @@ const pedidosController = {
 
 
   // Deletar um pedido
+
+  // DELETE /pedidos
+
+  /**
+   * controlador deleta pedidos do banco de dados
+   *
+   * @async
+   * @function: deletar pedidos
+   * @param {object} req -> objeto de requisisão (recebido do cliente HTTP)
+   * @param {object} res -> objeto de resposta ( enviado ao  cliente HTTP)
+   * @returns {@promise<void>} retorna uma resposta json com uma lista de pedidos
+   * @throws Mostra o console e retorna erro 500 se ocorrer falha de buscar os pedidos
+   */
+ 
 
   deletarPedido: async (req, res) => {
     try {

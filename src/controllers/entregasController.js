@@ -3,6 +3,20 @@ const { entregasModel } = require("../models/entregasModel");
 const entregasController = {
 
   // Listar todas as entregas
+
+   // GET /entregas
+
+  /**
+   * controlador lista todas as entregas do banco de dados
+   *
+   * @async
+   * @function: listarEntregas
+   * @param {object} req -> objeto de requisisão (recebido do cliente HTTP)
+   * @param {object} res -> objeto de resposta ( enviado ao  cliente HTTP)
+   * @returns {@promise<void>} retorna uma resposta json com uma lista de entregas
+   * @throws Mostra o console e retorna erro 500 se ocorrer falha de buscar os entregas
+   */
+
   listarEntregas: async (req, res) => {
     try {
       const {idEntrega} = req.query;
@@ -27,6 +41,19 @@ const entregasController = {
   },
 
   // Buscar entrega através do ID
+  // GET /entregas
+
+  /**
+   * controlador lista uma entrega especifica do banco de dados
+   *
+   * @async
+   * @function: buscar Um
+   * @param {object} req -> objeto de requisisão (recebido do cliente HTTP)
+   * @param {object} res -> objeto de resposta ( enviado ao  cliente HTTP)
+   * @returns {@promise<void>} retorna uma resposta json com uma lista de entregas
+   * @throws Mostra o console e retorna erro 500 se ocorrer falha de buscar os entregas
+   */
+
   buscarUm: async (req, res) => {
     try {
       const { idEntrega } = req.params;
